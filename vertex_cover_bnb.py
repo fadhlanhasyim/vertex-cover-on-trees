@@ -1,6 +1,11 @@
 import operator
+import time
+import tracemalloc
 
 def vertex_cover_bnb(G):
+    tracemalloc.start()
+    begin = time.time()
+
     # INITIALIZE SOLUTION VC SETS AND FRONTIER SET TO EMPTY SET
     OptVC = []
     CurVC = []
@@ -38,8 +43,7 @@ def vertex_cover_bnb(G):
             if CurVC_size < UpperBound:
                 OptVC = CurVC.copy()
                 UpperBound = CurVC_size
-            backtrack = True
-				
+            backtrack = True	
         else:   #partial solution
             CurLB = Lowerbound(CurG) + CurVC_size
             if CurLB < UpperBound:  # worth exploring
@@ -81,14 +85,21 @@ def vertex_cover_bnb(G):
         if element[1]==0:
             OptVC.remove(element)
 
-    return len(OptVC)
+    print("Solusi BnB:", len(OptVC))
+
+    end = time.time()
+    difference = end - begin
+    print(f"Total runtime of the BnB program is {difference:.4f} s")
+
+    _, peak_memory = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    print(f"Total memory usage of the DP program is {(peak_memory/10**6):.4f} MB")
 
 #TO FIND THE VERTEX WITH MAXIMUM DEGREE IN REMAINING GRAPH
 def find_maxdeg(g):
-	deglist = g.degree()
-	deglist_sorted = sorted(deglist, reverse=True, key=operator.itemgetter(1))  # sort in descending order of node degree
-	v = deglist_sorted[0]
-	return v
+    deglist = g.degree()
+    deglist_sorted = sorted(deglist, reverse=True, key=operator.itemgetter(1))  # sort in descending order of node degree
+    return deglist_sorted[0]
 
 #EXTIMATE LOWERBOUND
 def Lowerbound(graph):
